@@ -1,2 +1,3 @@
 flask
 influxdb_client
+flask_cors

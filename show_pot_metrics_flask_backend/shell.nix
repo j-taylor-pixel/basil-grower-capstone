@@ -29,17 +29,11 @@ in pkgs.mkShell rec {
     libxslt
     libzip
     zlib
-    python311Packages.torch
-    python311Packages.nvidia-ml-py
-    stdenv.cc.cc.lib
-    pam
   ];
 
   # Run this command, only after creating the virtual environment
   postVenvCreation = ''
     unset SOURCE_DATE_EPOCH
-    export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [
-      pkgs.stdenv.cc.cc]}
     pip install -r requirements.txt
   '';
 
@@ -49,4 +43,5 @@ in pkgs.mkShell rec {
     # allow pip to install wheels
     unset SOURCE_DATE_EPOCH
   '';
+
 }
