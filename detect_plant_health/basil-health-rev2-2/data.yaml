@@ -1,0 +1,15 @@
+names:
+- dark
+- healthy
+- wilt
+- yellow
+nc: 4
+roboflow:
+  license: CC BY 4.0
+  project: basil-health-rev2
+  url: https://universe.roboflow.com/4th-year-capstone/basil-health-rev2/dataset/2
+  version: 2
+  workspace: 4th-year-capstone
+test: /home/josiah/repos/basil-grower-capstone/detect_plant_health/basil-health-rev2-2/test/images
+train: /home/josiah/repos/basil-grower-capstone/detect_plant_health/basil-health-rev2-2/train/images
+val: /home/josiah/repos/basil-grower-capstone/detect_plant_health/basil-health-rev2-2/valid/images

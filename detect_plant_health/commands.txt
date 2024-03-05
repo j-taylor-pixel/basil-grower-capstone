@@ -1,0 +1,12 @@
+yolo task=detect mode=train model=yolov8s.pt data=/home/josiah/repos/basil-grower-capstone/detect_plant_health/basil-health-rev2-2/data.yaml epochs=100 imgsz=640
+
+yolo task=detect \
+mode=val \
+model=/home/josiah/repos/basil-grower-capstone/detect_plant_health/runs/detect/train3/weights/best.pt \
+data=/home/josiah/repos/basil-grower-capstone/detect_plant_health/basil-health-rev2-2/data.yaml
+
+yolo task=detect \
+mode=predict \
+model=/home/josiah/repos/basil-grower-capstone/detect_plant_health/runs/detect/train3/weights/best.pt
+conf=0.25 \
+source=/home/josiah/repos/basil-grower-capstone/detect_plant_health/basil-health-rev2-2/test/images

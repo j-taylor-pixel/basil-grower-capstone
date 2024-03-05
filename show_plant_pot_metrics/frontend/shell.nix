@@ -1,0 +1,14 @@
+with import <nixpkgs> {};
+
+stdenv.mkDerivation {
+    name = "node";
+    buildInputs = [
+        nodejs
+    ];
+    shellHook = ''
+        export PATH="$PWD/node_modules/.bin/:$PATH"
+        alias run='npm run'
+    '';
+}
+
+# call this cd frontend && nix-shell
