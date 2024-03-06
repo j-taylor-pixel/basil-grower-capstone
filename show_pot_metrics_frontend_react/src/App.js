@@ -5,14 +5,22 @@ function simplifyKey(key) {
 }
 
 function getColor(value) {
-  return value > 50 ? 'green' : 'red';
+  if (value <= 25) {
+    return 'red';
+  } else if (value <= 50) {
+    return 'orange';
+  } else if (value <= 75) {
+    return 'yellow';
+  } else {
+    return 'green';
+  }
 }
 
 function App() {
   const [data, setData] = useState({});
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/')
+    fetch('https://show-image-ro735h6uvq-pd.a.run.app/')
       .then(response => response.json())
       .then(json => setData(json))
       .catch(error => console.error('Error fetching data:', error));
@@ -23,7 +31,7 @@ function App() {
       <h1>Basil Metrics</h1>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', justifyContent: 'center' }}>
         {Object.keys(data).map(key => (
-          <div key={key} style={{ width: '100px', height: '100px', textAlign: 'center', backgroundColor: getColor(data[key]), color: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div key={key} style={{ width: '100px', height: '100px', textAlign: 'center', backgroundColor: getColor(data[key]), color: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRadius: '10px' }}>
             <div style={{ fontSize: '40px' }}>{data[key]}%</div>
             <div style={{ fontSize: '14px' }}>{simplifyKey(key)}</div>
           </div>
