@@ -20,10 +20,24 @@ function App() {
   const [data, setData] = useState({});
 
   useEffect(() => {
-    fetch('https://show-image-ro735h6uvq-pd.a.run.app/')
-      .then(response => response.json())
-      .then(json => setData(json))
-      .catch(error => console.error('Error fetching data:', error));
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://show-image-ro735h6uvq-pd.a.run.app/');
+        const json = await response.json();
+        setData(json);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    // Fetch data initially
+    fetchData();
+
+    // Fetch data every 10 seconds
+    const interval = setInterval(fetchData, 10000);
+
+    // Clean up interval on unmount
+    return () => clearInterval(interval);
   }, []);
 
   return (

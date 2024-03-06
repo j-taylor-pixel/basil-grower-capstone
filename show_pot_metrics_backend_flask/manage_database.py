@@ -43,9 +43,8 @@ class DatabaseInterface:
         # print(results)
         return results
     
-    def populate_with_dummy_data(self):
+    def populate_with_dummy_data(self, data = [50,40,10,90,55,30]):
         db_interface = DatabaseInterface()
-        data = [50,40,10,90,55,30]
         for i, measure in enumerate(Measurements):
             db_interface.send_data(measurement=measure, value=data[i])
         return
