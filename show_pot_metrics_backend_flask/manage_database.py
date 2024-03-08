@@ -9,12 +9,13 @@ BUCKET = "second_bucket"
 
 # different types of measurements
 class Measurements(Enum): 
-    light = 'light' # sufficient hour sof light
+    light = 'light' # sufficient hours of light
     moisture = 'moisture' # sufficient soil moisture
-    npk = 'npk' # soil quality
+    phosporous = "phosporous"
+    nitrogen = "nitrogen"
+    potassium = "potassium"
     ml = 'ml' # ratio of healthy leaves detected
-    nominal_light = 'nominal_light' # how much light we think is ideal 
-    nominal_water = 'nominal_moisture' # how much water we think is ideal
+    temp = "temp"
 
 
 class DatabaseInterface:
@@ -43,7 +44,7 @@ class DatabaseInterface:
         # print(results)
         return results
     
-    def populate_with_dummy_data(self, data = [50,40,10,90,55,30]):
+    def populate_with_dummy_data(self, data = [50,40,10,90,55,30, 20, 55, 80, 90]):
         db_interface = DatabaseInterface()
         for i, measure in enumerate(Measurements):
             db_interface.send_data(measurement=measure, value=data[i])
@@ -55,4 +56,3 @@ def test(): # example code
     db_interface.send_data(measurement=Measurements.light)
     db_interface.read_data(measurement=Measurements.light)
     return
-
