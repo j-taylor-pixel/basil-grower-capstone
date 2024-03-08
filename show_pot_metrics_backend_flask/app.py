@@ -17,7 +17,6 @@ def display_metrics():
             measurements.append(db_interface.read_data(measurement=measurement, additional_args="|> last()"))
             # dict for json
             measure_dict[str(measurement)] = db_interface.read_data(measurement=measurement, additional_args="|> last()")[0][0]
-        print(measure_dict)
         return measure_dict
     # POST
     data = request.get_json()
