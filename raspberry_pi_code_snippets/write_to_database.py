@@ -23,6 +23,8 @@ class Measurements(Enum): # should this be 3 seperate enums?
     moisture_target= 'moisture_target'
     light_threshold = 'light_threshold'
     light_target ='light_target'
+    pump_on = 'pump_on'
+    led_on = 'led_on'
     # Decision measurements: , decision | last update is 0, decision is a string
     last_update = 'last_update' # timestamp of when an update was made. Update won't be made for 3 more days
     decision = 'decision' # decision is made but not acted on twice a day. e.g increase light_target
