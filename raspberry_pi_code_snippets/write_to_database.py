@@ -60,7 +60,7 @@ def read_3_days(measurement=Measurements.decision.value, timeframe='start: -73h'
         |> filter(fn: (r) => r._measurement == \"{measurement}\")"
     return query_influx(query=query)
 
-def read_update_time(measurement=Measurements.last_update.value, timeframe='start: -3d'): # not sure if timeframe should be more than 3 days
+def read_update_time(measurement=Measurements.last_update.value, timeframe='start: -4d'): # not sure if timeframe should be more than 3 days
     query = f"from(bucket:\"{BUCKET}\")\
         |> range({timeframe})\
         |> filter(fn: (r) => r._measurement == \"{measurement}\")\
