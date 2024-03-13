@@ -16,6 +16,7 @@ def display_metrics():
         sensor_readings[str(measurement.value)] = read_last_measurement_database(measurement=measurement.value)[0]
     resp = make_response(jsonify(sensor_readings))
     resp.headers['Cache-Control'] = 'no-cache'
+    resp.headers['Connection'] = 'close'
     return resp
 
 @app.route('/populate/')
