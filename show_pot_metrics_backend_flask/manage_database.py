@@ -5,54 +5,46 @@ from enum import Enum
 TOKEN = "o8iQsdxsSf1l7lNRAFIfKRdBSvmpzdEHmNeZqy5yrB4StPTcFqhj0_WONmK-UyN-ksGmycGVefWvgjv3GabqjQ==" #todo hide later
 URL = "https://us-east-1-1.aws.cloud2.influxdata.com/"
 ORG = "f6056c661b1ca7c8" # from url
-BUCKET = "second_bucket"
+BUCKET = "third_bucket"
 
-# different types of measurements
 class Measurements(Enum): 
+    # Sensor measurements (these have values between 0 - 100), these are shown on frontend
     light = 'light' # sufficient hours of light
     moisture = 'moisture' # sufficient soil moisture
     phosporous = "phosporous"
     nitrogen = "nitrogen"
     potassium = "potassium"
-    ml = 'ml' # ratio of healthy leaves detected
-    temp = "temp"
+    leaf_health = 'leaf_health' # ratio of healthy leaves detected using ML
+    temperature = "temperature"
 
-
-class DatabaseInterface:
-    def __init__(self, token=TOKEN, url=URL, org=ORG, bucket=BUCKET):
-        self.token = token
-        self.url = url 
-        self.org = org
-        self.bucket = bucket
-        self.client = InfluxDBClient(url=url, token=token, org=org)
-    
-    def send_data(self, measurement=Measurements.light, value=0):
-        write_api = self.client.write_api(write_options=SYNCHRONOUS)
-        write_api.write(self.bucket, "my-org", [f"{measurement} {measurement}={value}"])
+def write_to_database(measurement=Measurements.light.value, value=0):
+    # Ensure string is passed, not enum object since it messes with the database
+    if type(measurement) != type(Measurements.light.value):
+        print('Use a string by appending .value to the measurement enum')
         return
-    
-    def read_data(self, measurement=Measurements.light, timeframe="start: -30d", additional_args=""):
-        query = f"from(bucket:\"{self.bucket}\")\
+    client = InfluxDBClient(url=URL, token=TOKEN, org=ORG)
+    write_api = client.write_api(write_options=SYNCHRONOUS)
+    write_api.write(BUCKET, ORG, [f"{measurement} {measurement}={value}"])
+    return
+
+def read_last_measurement_database(measurement=Measurements.light.value, timeframe='start: -5d'):
+    query = f"from(bucket:\"{BUCKET}\")\
         |> range({timeframe})\
         |> filter(fn: (r) => r._measurement == \"{measurement}\")\
-        {additional_args}"
-        result = self.client.query_api().query(org=self.org, query=query)
-        results = []
-        for table in result:
-            for record in table.records:
-                results.append((record.get_value(), record.get_field()))
-        # print(results)
-        return results
+        |> last()"
+    return query_influx(query=query)
+
+def query_influx(query):
+    client = InfluxDBClient(url=URL, token=TOKEN, org=ORG)
+    result = client.query_api().query(org=ORG, query=query)
+    results = []
+    for table in result:
+        for record in table.records:
+            results.append(record.get_value())
+    return results
     
-    def populate_with_dummy_data(self, data = [50,40,10,90,55,30, 20, 55, 80, 90]):
-        db_interface = DatabaseInterface()
-        for i, measure in enumerate(Measurements):
-            db_interface.send_data(measurement=measure, value=data[i])
-        return
-
-
-def test(): # example code
-    db_interface = DatabaseInterface()
-    db_interface.send_data(measurement=Measurements.light)
-    db_interface.read_data(measurement=Measurements.light)
+def populate_with_dummy_data(data = [50,40,10,90,55,30, 20, 55, 80, 90]):
+    for i, measure in enumerate(Measurements):
+        write_to_database(measurement=measure.value, value=data[i])
     return
+#populate_with_dummy_data()

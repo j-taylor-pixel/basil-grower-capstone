@@ -1,47 +1,30 @@
 from flask import Flask, request
 from flask_cors import CORS
-from manage_database import DatabaseInterface, Measurements
+from manage_database import Measurements, write_to_database, read_last_measurement_database, populate_with_dummy_data
+import random
+
 
 app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def display_metrics():
-    if request.method == 'GET':
-        # read database and display as txt for now
-        db_interface = DatabaseInterface()
-        measurements = []
-        measure_dict = {}
-        for measurement in Measurements:
-            measurements.append(db_interface.read_data(measurement=measurement, additional_args="|> last()"))
-            # dict for json
-            measure_dict[str(measurement)] = db_interface.read_data(measurement=measurement, additional_args="|> last()")[0][0]
-        return measure_dict
-    # POST
-    data = request.get_json()
-    matched_measurement = matching_enum(data=data)
-    db_interface = DatabaseInterface()
-    db_interface.send_data(measurement=matched_measurement, value=data["value"])
-    return "200 OK"
-
-def matching_enum(data): # matches a string to its relevant enum
-    measurement_value = data["Measurement"]
-    matching_measurement = None
+    # read database and display as txt. This will be invoked by frontend
+    sensor_readings = {} # dict for json
     for measurement in Measurements:
-        if measurement.value == measurement_value:
-            matching_measurement = measurement
-            break
+        sensor_readings[str(measurement.value)] = read_last_measurement_database(measurement=measurement.value)
+    return sensor_readings
 
-    return matching_measurement
+@app.route('/populate/')
+def populate_random_values():
+    data = [random.randint(0, 100) for _ in range(len(Measurements))]
+    populate_with_dummy_data(data=data)
+    return f"Randomly changed values to {data}"
 
-@app.rout('/demo/', methods=['GET'])
+@app.route('/demo/', methods=['GET'])
 def demo_page():
-    
-
     return "ok"
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)
