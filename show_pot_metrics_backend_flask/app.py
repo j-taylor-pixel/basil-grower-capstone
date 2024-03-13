@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, jsonify, make_response
 from flask_cors import CORS
 from manage_database import Measurements, write_to_database, read_last_measurement_database, populate_with_dummy_data
 import random
@@ -13,8 +13,10 @@ def display_metrics():
     # read database and display as txt. This will be invoked by frontend
     sensor_readings = {} # dict for json
     for measurement in Measurements:
-        sensor_readings[str(measurement.value)] = read_last_measurement_database(measurement=measurement.value)
-    return sensor_readings
+        sensor_readings[str(measurement.value)] = read_last_measurement_database(measurement=measurement.value)[0]
+    resp = make_response(jsonify(sensor_readings))
+    resp.headers['Cache-Control'] = 'no-cache'
+    return resp
 
 @app.route('/populate/')
 def populate_random_values():

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 function simplifyKey(key) {
-  //return key.split('.').pop().charAt(0).toUpperCase() + key.slice(1).split('.').pop().slice(1);
-  return key
+  const parts = key.split('_');
+  return parts.map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
 }
 
 function getColor(value) {
