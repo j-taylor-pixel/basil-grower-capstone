@@ -35,5 +35,13 @@ def matching_enum(data): # matches a string to its relevant enum
 
     return matching_measurement
 
+@app.rout('/demo/', methods=['GET'])
+def demo_page():
+    
+
+    return "ok"
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
