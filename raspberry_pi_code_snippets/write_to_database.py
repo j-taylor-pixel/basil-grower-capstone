@@ -3,11 +3,15 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 from enum import Enum
 from datetime import datetime
 import pytz
+import base64
+from PIL import Image
+from io import BytesIO
+from datetime import datetime, timedelta
 
 TOKEN = "o8iQsdxsSf1l7lNRAFIfKRdBSvmpzdEHmNeZqy5yrB4StPTcFqhj0_WONmK-UyN-ksGmycGVefWvgjv3GabqjQ==" #todo hide later
 URL = "https://us-east-1-1.aws.cloud2.influxdata.com/"
 ORG = "f6056c661b1ca7c8" # from url
-BUCKET = "third_bucket" 
+BUCKET = "production" 
 
 class Measurements(Enum): # should this be 3 seperate enums?
     # Sensor measurements (these have values between 0 - 100), these are shown on frontend
@@ -28,6 +32,9 @@ class Measurements(Enum): # should this be 3 seperate enums?
     # Decision measurements: , decision | last update is 0, decision is a string
     last_update = 'last_update' # timestamp of when an update was made. Update won't be made for 3 more days
     decision = 'decision' # decision is made but not acted on twice a day. e.g increase light_target
+    # Image storage
+    image_untagged = 'image_untagged'
+    image_tagged = 'image_tagged'
 
 def write_to_database(measurement=Measurements.light.value, value=0):
     # Ensure string is passed, not enum object since it messes with the database
@@ -88,7 +95,32 @@ def query_influx(query):
             results.append(record.get_value())
     return results
 
+def encode_and_upload_image(imagename='./test_full.jpg'):
+    with Image.open(imagename) as img:
+        # Downsample the image by a factor of 2 using ANTIALIAS filter (high-quality downsampling)
+        downscaled_img = img.resize((320, 320)) # downscale 640 x 640 by half so it fits in db limit size of 64 kb
+        # Encode the downscaled image
+        with BytesIO() as buffer:
+            downscaled_img.save(buffer, format="JPEG")
+            encoded_string = base64.b64encode(buffer.getvalue())
+        encoded_string = encoded_string.decode('utf-8')
+        # print(encoded_string) # this is super long
+        write_to_database(measurement=Measurements.image_untagged.value, value=f"\"{encoded_string}\"")
+    return
 
+def download_and_decode_image(imagename='', measurement=Measurements.image_untagged.value, timeframe='start: -4d'):
+    # make query
+    query = f"from(bucket:\"{BUCKET}\")\
+        |> range({timeframe})\
+        |> filter(fn: (r) => r._measurement == \"{measurement}\")\
+        |> last()"
+    result = query_influx(query=query)[0]
+    # decode
+    decoded_bytes = base64.b64decode(result.encode('utf-8'))
+    # Write the bytes to a new image file
+    with open('restored_image.jpg', 'wb') as image_file:
+        image_file.write(decoded_bytes)
+    return 
 #write_to_database(measurement=Measurements.moisture.value, value=82) # write sensor data 
 #print(read_last_measurement_database(measurement=Measurements.moisture.value)) # read sensor data
 
@@ -99,3 +131,24 @@ def query_influx(query):
 
 #write_to_database(measurement=Measurements.decision.value, value="\"decreased water threshold\"") # log a decision
 #print(read_3_days()) # read all of last 3 day of decicions
+
+#encode_and_upload_image() # upload an image
+#download_and_decode_image() # download an image
+
+# Get the current time
+now = datetime.now()
+
+# Calculate the number of seconds passed today
+seconds_passed_today = int((now - datetime(now.year, now.month, now.day)).total_seconds())
+#print("Seconds passed today:", seconds_passed_today)
+
+#print(read_average_database())
+print(read_average_database(timeframe='start: -1d, stop: -0d')) # last 24 hours
+
+print(read_average_database(timeframe=f'start: -{seconds_passed_today}s, stop: -0s')) # all of today 
+
+day_in_seconds = 24*60*60
+
+# perhaps theres no data for that period
+print(read_average_database(timeframe=f'start: -{seconds_passed_today-day_in_seconds}s, stop: -{seconds_passed_today}s')) # all of yesterday
+

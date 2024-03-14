@@ -1,2 +1,3 @@
 influxdb_client
 pytz
+Pillow
