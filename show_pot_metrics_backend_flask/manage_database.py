@@ -40,7 +40,7 @@ def write_to_database(measurement=Measurements.light.value, value=0):
     write_api.write(BUCKET, ORG, [f"{measurement} {measurement}={value}"])
     return
 
-def read_last_measurement_database(measurement=Measurements.light.value, timeframe='start: -10d'):
+def read_last_measurement_database(measurement=Measurements.light.value, timeframe='start: -30d'):
     query = f"from(bucket:\"{BUCKET}\")\
         |> range({timeframe})\
         |> filter(fn: (r) => r._measurement == \"{measurement}\")\

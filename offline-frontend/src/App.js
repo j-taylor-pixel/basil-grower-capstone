@@ -36,7 +36,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://show-image-ro735h6uvq-pd.a.run.app/');
+        const response = await fetch('data.json');
         const json = await response.json();
         setData(json);
       } catch (error) {
