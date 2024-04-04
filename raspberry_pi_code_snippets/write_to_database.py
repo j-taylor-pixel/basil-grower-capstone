@@ -143,12 +143,15 @@ seconds_passed_today = int((now - datetime(now.year, now.month, now.day)).total_
 #print("Seconds passed today:", seconds_passed_today)
 
 #print(read_average_database())
-print(read_average_database(timeframe='start: -1d, stop: -0d')) # last 24 hours
+#print(round(read_average_database(timeframe='start: -1d, stop: -0d')[0],3))
 
-print(read_average_database(timeframe=f'start: -{seconds_passed_today}s, stop: -0s')) # all of today 
+#print(read_average_database(timeframe=f'start: -{seconds_passed_today}s, stop: -0s')) # all of today 
+
+#print(round(read_average_database(timeframe='start: -2d, stop: -1d')[0],3))
+print(round(read_average_database(measurement=Measurements.moisture.value, timeframe='start: -3d, stop: -2d')[0],3))
 
 day_in_seconds = 24*60*60
 
 # perhaps theres no data for that period
-print(read_average_database(timeframe=f'start: -{seconds_passed_today-day_in_seconds}s, stop: -{seconds_passed_today}s')) # all of yesterday
+#print(read_average_database(timeframe=f'start: -{seconds_passed_today-day_in_seconds}s, stop: -{seconds_passed_today}s')) # all of yesterday
 

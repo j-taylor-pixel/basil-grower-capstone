@@ -1,9 +1,8 @@
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, send_from_directory, url_for
 from flask_cors import CORS
 from manage_database import Measurements, write_to_database, read_last_measurement_database, populate_with_dummy_data
-import random
 from datetime import datetime
-
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -71,11 +70,44 @@ def demo_page(number_of_days=2):
         now = datetime.now()
         # Calculate the number of seconds passed today
         seconds_passed_today = int((now - datetime(now.year, now.month, now.day)).total_seconds())
+        # get decision
+        # get water, light percentage values?? optional for now
 
-
-        data[day] = todays_data # append to data
+        #todays_data["image_url"] = get_image_url(day=day)
+        image_name = get_image_name(day=day)
+        todays_data["image_url"] = url_for('get_image', image_name=image_name, _external=True)
+        todays_data["decision"] = get_decision(day=day)
+        # increment seconds passed?
+        data[day] = todays_data # dict of dicts
     print(data)
-    return "ok" # data 
+    return "ok" # data \
+
+@app.route('/images/<image_name>') 
+def get_image(image_name): # thefrontend will use this url for each pic
+    return send_from_directory('images', image_name)
+
+
+def get_decision(day):
+    # idk how to 
+
+    # first check my expected 
+
+
+    return 0
+
+def match_int_to_decision(decision_int):
+
+    return
+
+def get_image_name(day):
+    match day:
+        case 0: 
+            return 'basil_23_03_2024_21 (1).jpg'
+        case 1:
+            return 'basil_22_03_2024_23.jpg'
+        case 2: 
+            return 'basil_14_03_2024_08.jpg'
+    return ''
 
 if __name__ == "__main__":
     app.run(debug=True)
