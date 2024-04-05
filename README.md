@@ -1,5 +1,14 @@
 # basil-grower-capstone
-Welcome to my Fourth Year Design Project (FYDP) which I completed to graduate from Mechatronics Engineering at University of Waterloo. The basil grower utilizes machine learning to classify leaf health. The quantified leaf health can modify the amount of water and light which are autonmously provided. Over time, the basil grower learns perfect growing conditions for basil to keep it in perfect health. 
+![Static Badge](https://img.shields.io/badge/Python-008000)
+![Static Badge](https://img.shields.io/badge/React-8A2BE2)
+![Static Badge](https://img.shields.io/badge/YOLOv8-0000FF)
+![Static Badge](https://img.shields.io/badge/Flask-FFFF00)
+![Static Badge](https://img.shields.io/badge/RaspberryPi-FFA500)
+![Static Badge](https://img.shields.io/badge/Docker-ff0000)
+![Static Badge](https://img.shields.io/badge/Nix-FFC0CB)
+
+
+Welcome to my Fourth Year Design Project (FYDP) which I completed to graduate from Mechatronics Engineering at University of Waterloo. The basil grower utilizes machine learning to classify leaf health. The quantified leaf health can modify the amount of water and light which are autonmously provided. Over time, the basil grower learns perfect growing conditions for basil to keep it in perfect health. All infrastructure is deployed on GCP, using Docker images.
 
 ![Basil Grower on Symposium Day](readme_images/basil_grower.png)
 ## Sub-Directories Explained
